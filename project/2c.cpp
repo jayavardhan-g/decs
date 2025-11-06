@@ -3,7 +3,6 @@
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 #include "httplib.h"
 #include <bits/stdc++.h>
-#include <libpq-fe.h>
 using namespace std;
 using namespace httplib;
 
