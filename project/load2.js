@@ -1,0 +1,37 @@
+import http from "k6/http";
+import { check } from "k6";
+
+// <-- FIX: Tell k6 that 200, 404, AND 409 are all OK
+http.setResponseCallback(http.expectedStatuses(200, 404, 409));
+
+export const options = {
+  stages: [
+    { duration: "5s", target: 1000 },
+    { duration: "30s", target: 1000 },
+  ],
+  thresholds: {
+    http_req_failed: ["rate<0.01"],
+    http_req_duration: ["p(95)<500"],
+  },
+};
+
+export default function () {
+  //const id = Math.floor(Math.random() * 1000) + 1;
+  //const val = "http_value_" + id; // Use a slightly more realistic value
+  var res;
+
+  if (/*Math.random() < 0.5*/ 1) {
+    // --- 1. GET Request ---
+    res = http.get(`http://localhost:1234/val?id=1`);
+    check(res, {
+      "GET status is 200 or 404": (r) => r.status === 200 || r.status === 404,
+    });
+  } else {
+    // --- 2. POST Request ---
+    // This correctly sends data in the query string, which your server reads
+    let res = http.post(`http://localhost:8080/set?id=${id}`, "hello");
+    check(res, {
+      "set ok": (r) => r.status === 200,
+    });
+  }
+}
