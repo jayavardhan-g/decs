@@ -1,5 +1,5 @@
 //g++ 5c.cpp -o s -lpqxx -lpq -lssl -lcrypto
-#define CPPHTTPLIB_OPENSSL_SUPPORT
+//#define CPPHTTPLIB_OPENSSL_SUPPORT
 #include "httplib.h"
 //#include <iostream>
 #include <string>
@@ -18,7 +18,7 @@ void cl(int tno) {
     // cin >> path;
     cli.set_keep_alive(true);
     auto res = cli.Get(path);
-    // cout <<tno<< res->body << endl;
+    cout <<tno<< res->body << endl;
   }
 }
 

@@ -1,11 +1,12 @@
 // g++ 5s.cpp -lpqxx -lpq -lpthread -o server
 #include "httplib.h"
-#include <pqxx/pqxx>
 #include <condition_variable>
 #include <list>
 #include <mutex>
+#include <pqxx/pqxx>
 #include <queue>
 #include <unordered_map>
+
 using namespace std;
 
 using namespace httplib;
@@ -29,7 +30,7 @@ public:
     // Move to front (LRU)
     items.splice(items.begin(), items, it->second);
     value = it->second->second;
-    cout << "Cache hit: " << key << " -> " << value << endl;
+    // cout << "Cache hit: " << key << " -> " << value << endl;
     return true;
   }
 
@@ -44,7 +45,7 @@ public:
     }
     items.emplace_front(key, value);
     index[key] = items.begin();
-    cout << "Cache put: " << key << " -> " << value << endl;
+    // cout << "Cache put: " << key << " -> " << value << endl;
   }
 
   void erase(int key) {
@@ -53,7 +54,7 @@ public:
       items.erase(index[key]);
       index.erase(key);
     }
-    cout << "Cache delete: " << key << endl;
+    // cout << "Cache delete: " << key << endl;
   }
 };
 
@@ -221,59 +222,18 @@ int main() {
     try {
       conn = pool.acquire();
       db::work txn{*conn};
-      txn.exec_params("INSERT INTO kv_store (id, value) VALUES ($1, $2)",
-                      id_int, val);
+
+      // Use the UPSERT command
+      const string sql = "INSERT INTO kv_store (id, value) VALUES ($1, $2) "
+                         "ON CONFLICT (id) DO UPDATE SET value = $2";
+
+      txn.exec_params(sql, id_int, val);
       txn.commit();
       pool.release(conn);
 
       cache.put(id_int, val);
-      res.set_content("Key saved: " + to_string(id_int), "text/plain");
-    } catch (const db::unique_violation &e) {
-      if (conn)
-        pool.release(conn);
-      res.status = 409;
-      res.set_content("Duplicate key: " + to_string(id_int), "text/plain");
-    } catch (const std::exception &e) {
-      if (conn)
-        pool.release(conn);
-      res.status = 500;
-      res.set_content(string("Database error: ") + e.what(), "text/plain");
-    }
-  });
-
-  // PUT
-  srv.Put("/put", [&](const Request &req, Response &res) {
-    if (!req.has_param("id") || !req.has_param("val")) {
-      res.status = 400;
-      res.set_content("Error: Missing 'id' or 'val'.", "text/plain");
-      return;
-    }
-
-    int id_int = parse_id(req.get_param_value("id"));
-    string val = req.get_param_value("val");
-
-    if (id_int == -1) {
-      res.status = 400;
-      res.set_content("Invalid ID", "text/plain");
-      return;
-    }
-
-    db::connection *conn = nullptr;
-    try {
-      db::connection *conn = pool.acquire();
-      db::work txn{*conn};
-      db::result r = txn.exec_params(
-          "UPDATE kv_store SET value = $1 WHERE id = $2", val, id_int);
-      txn.commit();
-      pool.release(conn);
-
-      if (r.affected_rows() == 0) {
-        res.status = 404;
-        res.set_content("No entry for ID: " + to_string(id_int), "text/plain");
-      } else {
-        cache.put(id_int, val);
-        res.set_content("Updated ID: " + to_string(id_int), "text/plain");
-      }
+      res.set_content("Key saved/updated: " + to_string(id_int), "text/plain");
+      
     } catch (const std::exception &e) {
       if (conn)
         pool.release(conn);
