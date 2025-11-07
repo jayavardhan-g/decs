@@ -1,57 +1,54 @@
-#ifndef KVCACHE_H
-#define KVCACHE_H
+#ifndef DBPOOL_H
+#define DBPOOL_H
 
-#include <list>
-#include <string>
-#include <unordered_map>
+#include <pqxx/pqxx>
+#include <queue>
 #include <mutex>
-#include <utility> // For std::pair
-#include <cstddef> // For size_t
+#include <condition_variable>
+#include <string>
+#include <iostream> // For std::cerr
+#include <stdexcept> // For std::exception
 
-class KVCache {
-  size_t capacity;
-  std::list<std::pair<int, std::string>> items;
-  std::unordered_map<int, std::list<std::pair<int, std::string>>::iterator> index;
+class LibpqxxPool {
+private:
+  std::queue<pqxx::connection *> pool;
   std::mutex mtx;
+  std::condition_variable cv;
+  std::string conn_string;
 
 public:
-  KVCache(size_t cap) : capacity(cap) {}
-
-  bool get(int key, std::string &value) {
-    std::lock_guard<std::mutex> lock(mtx);
-    auto it = index.find(key);
-    if (it == index.end())
-      return false;
-
-    // Move to front (LRU)
-    items.splice(items.begin(), items, it->second);
-    value = it->second->second;
-    // std::cout << "Cache hit: " << key << " -> " << value << std::endl;
-    return true;
+  LibpqxxPool(int size, const std::string &connStr) : conn_string(connStr) {
+    for (int i = 0; i < size; i++) {
+      try {
+        pool.push(new pqxx::connection(conn_string));
+      } catch (const std::exception &e) {
+        std::cerr << "DB connection failed in pool: " << e.what() << std::endl;
+        exit(1);
+      }
+    }
   }
 
-  void put(int key, const std::string &value) {
-    std::lock_guard<std::mutex> lock(mtx);
-    if (index.count(key)) {
-      items.erase(index[key]);
-    } else if (items.size() >= capacity) {
-      auto last = items.back();
-      index.erase(last.first);
-      items.pop_back();
-    }
-    items.emplace_front(key, value);
-    index[key] = items.begin();
-    // std::cout << "Cache put: " << key << " -> " << value << std::endl;
+  pqxx::connection *acquire() {
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [&] { return !pool.empty(); });
+    pqxx::connection *conn = pool.front();
+    pool.pop();
+    return conn;
   }
 
-  void erase(int key) {
-    std::lock_guard<std::mutex> lock(mtx);
-    if (index.count(key)) {
-      items.erase(index[key]);
-      index.erase(key);
+  void release(pqxx::connection *conn) {
+    std::unique_lock<std::mutex> lock(mtx);
+    pool.push(conn);
+    lock.unlock();
+    cv.notify_one();
+  }
+
+  ~LibpqxxPool() {
+    while (!pool.empty()) {
+      delete pool.front();
+      pool.pop();
     }
-    // std::cout << "Cache delete: " << key << std::endl;
   }
 };
 
-#endif // KVCACHE_H
+#endif

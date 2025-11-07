@@ -1,19 +1,20 @@
 #ifndef KVCACHE_H
 #define KVCACHE_H
 
-#include <cstddef> // For size_t
 #include <list>
-#include <mutex>
 #include <string>
 #include <unordered_map>
+#include <mutex>
 #include <utility> // For std::pair
+#include <cstddef> // For size_t
 
+// Note: We use std:: prefixes here because "using namespace std;"
+// in a header file is bad practice.
 
 class KVCache {
   size_t capacity;
   std::list<std::pair<int, std::string>> items;
-  std::unordered_map<int, std::list<std::pair<int, std::string>>::iterator>
-      index;
+  std::unordered_map<int, std::list<std::pair<int, std::string>>::iterator> index;
   std::mutex mtx;
 
 public:
@@ -25,9 +26,11 @@ public:
     if (it == index.end())
       return false;
 
-        items.splice(items.begin(), items, it->second);
+    // Move to front (LRU)
+    items.splice(items.begin(), items, it->second);
     value = it->second->second;
-        return true;
+    // std::cout << "Cache hit: " << key << " -> " << value << std::endl;
+    return true;
   }
 
   void put(int key, const std::string &value) {
@@ -41,6 +44,7 @@ public:
     }
     items.emplace_front(key, value);
     index[key] = items.begin();
+    // std::cout << "Cache put: " << key << " -> " << value << std::endl;
   }
 
   void erase(int key) {
@@ -49,6 +53,7 @@ public:
       items.erase(index[key]);
       index.erase(key);
     }
+    // std::cout << "Cache delete: " << key << std::endl;
   }
 };
 
