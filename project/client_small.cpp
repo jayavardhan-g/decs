@@ -184,7 +184,6 @@ int main() {
       threads.push_back(thread(delete_all, i ));
     }
 
-    // Wait for all threads to finish
     for (auto &t : threads) {
       t.join();
     }
@@ -210,7 +209,6 @@ int main() {
       threads.push_back(thread(fill_all, i ));
     }
 
-    // Wait for all threads to finish
     for (auto &t : threads) {
       t.join();
     }

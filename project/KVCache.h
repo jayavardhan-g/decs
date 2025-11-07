@@ -5,11 +5,9 @@
 #include <string>
 #include <unordered_map>
 #include <mutex>
-#include <utility> // For std::pair
-#include <cstddef> // For size_t
+#include <utility> 
+#include <cstddef> 
 
-// Note: We use std:: prefixes here because "using namespace std;"
-// in a header file is bad practice.
 
 class KVCache {
   size_t capacity;
