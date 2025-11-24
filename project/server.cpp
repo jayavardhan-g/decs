@@ -1,17 +1,19 @@
-// g++ 7s.cpp -lpqxx -lpq -lpthread -o server
+// g++ server.cpp -lpqxx -lpq -lpthread -o server
+// grep nameserver /etc/resolv.conf
+// ip route | grep default | awk '{print $3}'
 #include "httplib.h"
-#include <pqxx/pqxx>
 #include <iostream>
-#include <string>
+#include <pqxx/pqxx>
 #include <stdexcept>
+#include <string>
 
-#include "kvcache.h"
 #include "dbpool.h"
+#include "kvcache.h"
+
 using namespace std;
 
 using namespace httplib;
 namespace db = pqxx;
-
 
 int parse_id(const string &s) {
   try {
@@ -22,8 +24,17 @@ int parse_id(const string &s) {
 }
 
 int main() {
+  // const string conn_str =
+  //     //"dbname=decs user=postgres password=kali host=Nani.mshome.net";
+  //     "dbname=decs user=postgres password=kali host=172.23.32.1";
+  //  Use 127.0.0.1 to force a TCP connection (which uses the password)
+  string db_host;
+  cout << "Enter DB Host IP (e.g., 172.23.32.1): ";
+  cin >> db_host;
+
+  // Construct the connection string dynamically
   const string conn_str =
-      "dbname=decs user=postgres password=kali host=192.168.137.1";
+      "dbname=decs user=postgres password=kali host=" + db_host;
 
   cout << "Enter pool size: " << endl;
   ;
@@ -61,17 +72,20 @@ int main() {
   };
 
   srv.Get("/", [](const Request &req, Response &res) {
-    string s = "Your IP: " + req.remote_addr+ to_string(req.remote_port)+ "\n";
+    string s =
+        "Your IP: " + req.remote_addr + to_string(req.remote_port) + "\n";
     res.set_content(s, "text/plain");
   });
 
   // GET
   srv.Get("/val", [&](const Request &req, Response &res) {
+    //cout<<"GET";
     if (!req.has_param("id")) {
       res.status = 400;
       res.set_content("Error: 'id' parameter is missing.", "text/plain");
       return;
     }
+
 
     int id_int = parse_id(req.get_param_value("id"));
     if (id_int == -1) {
@@ -121,6 +135,7 @@ int main() {
       return;
     }
 
+    //cout<<"POST";
     int id_int = parse_id(req.get_param_value("id"));
     string val = req.get_param_value("val");
 
@@ -146,7 +161,7 @@ int main() {
 
       cache.put(id_int, val);
       res.set_content("Key saved/updated: " + to_string(id_int), "text/plain");
-      
+
     } catch (const std::exception &e) {
       if (conn)
         pool.release(conn);
@@ -162,6 +177,8 @@ int main() {
       res.set_content("Error: Missing 'id'.", "text/plain");
       return;
     }
+
+    //cout<<"DELETE";
 
     int id_int = parse_id(req.get_param_value("id"));
     if (id_int == -1) {
