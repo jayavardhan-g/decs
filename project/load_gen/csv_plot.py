@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
+import os
 
 # 1. Check arguments
 if len(sys.argv) < 2:
@@ -44,11 +45,28 @@ try:
     plt.title(f'Load Test Results: {csv_file}')
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
 
-    # 4. Save the plot
-    output_img = csv_file.replace('.csv', '.png')
-    plt.savefig(output_img)
-    print(f"📈 Plot saved to: {output_img}")
+# --- ### NEW CODE STARTS HERE ### ---
     
+    # Define the output directory
+    results_dir = "results"
+    
+    # Create the directory if it doesn't exist
+    os.makedirs(results_dir, exist_ok=True)
+    
+    # Get just the filename (removes any folder path from input, e.g., data/test.csv -> test.csv)
+    base_name = os.path.basename(csv_file)
+    
+    # Create the new image name (test.csv -> test.png)
+    image_name = base_name.replace('.csv', '.png')
+    
+    # Join them to make the full output path (results/test.png)
+    output_path = os.path.join(results_dir, image_name)
+    
+    # Save using the new path
+    plt.savefig(output_path)
+    print(f"📈 Plot saved to: {output_path}")
+    
+    # --- ### NEW CODE ENDS HERE ### ---   
     # Show plot (optional, works if you have a display)
     # plt.show()
 

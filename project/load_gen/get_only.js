@@ -11,10 +11,7 @@ export let options = {
 };
 
 export default function () {
-  // GET /val?id=<id>
   const id = Math.floor(Math.random() * (parseInt(__ENV.KEYSPACE || '10000'))) + 1;
-  const res = http.get(`${BASE}/val`, { params: { id: id } });
-  // read body implicitly happens; short sleep to yield
-  // closed-loop style in k6: each VU runs this loop
-  // no explicit sleep = tight loop
+  // FIX: Append ID to URL string
+  res = http.get(`${BASE}/val?id=${id}`);
 }

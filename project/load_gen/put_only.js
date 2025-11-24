@@ -13,4 +13,5 @@ export default function () {
   const id = Math.floor(Math.random() * (parseInt(__ENV.KEYSPACE || '10000'))) + 1;
   const payload = { id: String(id), val: `val-${__VU}-${Math.random().toString(36).slice(2,8)}` };
   const res = http.post(`${BASE}/save`, payload);
+  
 }

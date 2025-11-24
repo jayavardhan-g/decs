@@ -1,0 +1,117 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: mixed.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1000 max VUs, 50s max duration (incl. graceful stop):
+              * default: 1000 looping VUs for 20s (gracefulStop: 30s)
+
+
+running (00.8s), 1000/1000 VUs, 2223 complete and 0 interrupted iterations
+default   [   4% ] 1000 VUs  00.8s/20s
+
+running (01.8s), 1000/1000 VUs, 7641 complete and 0 interrupted iterations
+default   [   9% ] 1000 VUs  01.8s/20s
+
+running (02.8s), 1000/1000 VUs, 11640 complete and 0 interrupted iterations
+default   [  14% ] 1000 VUs  02.8s/20s
+time="2025-11-25T04:38:49+05:30" level=warning msg="The test has generated metrics with 100590 unique time series, which is higher than the suggested limit of 100000 and could cause high memory usage. Consider not using high-cardinality values like unique IDs as metric tags or, if you need them in the URL, use the name metric tag or URL grouping. See https://grafana.com/docs/k6/latest/using-k6/tags-and-groups/ for details." component=metrics-engine-ingester
+
+running (03.8s), 1000/1000 VUs, 15022 complete and 0 interrupted iterations
+default   [  19% ] 1000 VUs  03.8s/20s
+
+running (04.8s), 1000/1000 VUs, 19943 complete and 0 interrupted iterations
+default   [  24% ] 1000 VUs  04.8s/20s
+
+running (05.8s), 1000/1000 VUs, 25115 complete and 0 interrupted iterations
+default   [  29% ] 1000 VUs  05.8s/20s
+
+running (06.8s), 1000/1000 VUs, 29613 complete and 0 interrupted iterations
+default   [  34% ] 1000 VUs  06.8s/20s
+time="2025-11-25T04:38:53+05:30" level=warning msg="The test has generated metrics with 201849 unique time series, which is higher than the suggested limit of 100000 and could cause high memory usage. Consider not using high-cardinality values like unique IDs as metric tags or, if you need them in the URL, use the name metric tag or URL grouping. See https://grafana.com/docs/k6/latest/using-k6/tags-and-groups/ for details." component=metrics-engine-ingester
+
+running (07.8s), 1000/1000 VUs, 34838 complete and 0 interrupted iterations
+default   [  39% ] 1000 VUs  07.8s/20s
+
+running (08.8s), 1000/1000 VUs, 40231 complete and 0 interrupted iterations
+default   [  44% ] 1000 VUs  08.8s/20s
+
+running (09.8s), 1000/1000 VUs, 45197 complete and 0 interrupted iterations
+default   [  49% ] 1000 VUs  09.8s/20s
+
+running (10.8s), 1000/1000 VUs, 50528 complete and 0 interrupted iterations
+default   [  54% ] 1000 VUs  10.8s/20s
+
+running (11.8s), 1000/1000 VUs, 55640 complete and 0 interrupted iterations
+default   [  59% ] 1000 VUs  11.8s/20s
+
+running (12.8s), 1000/1000 VUs, 60721 complete and 0 interrupted iterations
+default   [  64% ] 1000 VUs  12.8s/20s
+
+running (13.8s), 1000/1000 VUs, 65654 complete and 0 interrupted iterations
+default   [  69% ] 1000 VUs  13.8s/20s
+
+running (14.8s), 1000/1000 VUs, 70719 complete and 0 interrupted iterations
+default   [  74% ] 1000 VUs  14.8s/20s
+
+running (15.8s), 1000/1000 VUs, 75946 complete and 0 interrupted iterations
+default   [  79% ] 1000 VUs  15.8s/20s
+time="2025-11-25T04:39:02+05:30" level=warning msg="The test has generated metrics with 400200 unique time series, which is higher than the suggested limit of 100000 and could cause high memory usage. Consider not using high-cardinality values like unique IDs as metric tags or, if you need them in the URL, use the name metric tag or URL grouping. See https://grafana.com/docs/k6/latest/using-k6/tags-and-groups/ for details." component=metrics-engine-ingester
+
+running (16.8s), 1000/1000 VUs, 81369 complete and 0 interrupted iterations
+default   [  84% ] 1000 VUs  16.8s/20s
+
+running (17.8s), 1000/1000 VUs, 86471 complete and 0 interrupted iterations
+default   [  89% ] 1000 VUs  17.8s/20s
+
+running (18.8s), 1000/1000 VUs, 91572 complete and 0 interrupted iterations
+default   [  94% ] 1000 VUs  18.8s/20s
+
+running (19.8s), 1000/1000 VUs, 96758 complete and 0 interrupted iterations
+default   [  99% ] 1000 VUs  19.8s/20s
+
+running (20.8s), 0199/1000 VUs, 98609 complete and 0 interrupted iterations
+default ↓ [ 100% ] 1000 VUs  20s
+
+running (21.8s), 0199/1000 VUs, 98609 complete and 0 interrupted iterations
+default ↓ [ 100% ] 1000 VUs  20s
+
+running (22.8s), 0199/1000 VUs, 98609 complete and 0 interrupted iterations
+default ↓ [ 100% ] 1000 VUs  20s
+
+running (23.8s), 0199/1000 VUs, 98609 complete and 0 interrupted iterations
+default ↓ [ 100% ] 1000 VUs  20s
+
+running (24.8s), 0199/1000 VUs, 98609 complete and 0 interrupted iterations
+default ↓ [ 100% ] 1000 VUs  20s
+
+
+  █ TOTAL RESULTS 
+
+    HTTP
+    http_req_duration..............: avg=209.62ms min=214.8µs med=148.31ms max=15.5s p(90)=242.31ms p(95)=333.79ms
+      { expected_response:true }...: avg=210.47ms min=214.8µs med=148.19ms max=15.5s p(90)=256.32ms p(95)=359.59ms
+    http_req_failed................: 26.33% 26025 out of 98808
+    http_reqs......................: 98808  3939.362942/s
+
+    EXECUTION
+    iteration_duration.............: avg=212.45ms min=283.1µs med=148.39ms max=15.6s p(90)=244.43ms p(95)=340.85ms
+    iterations.....................: 98808  3939.362942/s
+    vus............................: 199    min=199            max=1000
+    vus_max........................: 1000   min=1000           max=1000
+
+    NETWORK
+    data_received..................: 12 MB  465 kB/s
+    data_sent......................: 8.9 MB 355 kB/s
+
+
+
+
+running (25.1s), 0000/1000 VUs, 98808 complete and 0 interrupted iterations
+default ✓ [ 100% ] 1000 VUs  20s

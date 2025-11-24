@@ -1,5 +1,4 @@
 import http from 'k6/http';
-import { sleep } from 'k6';
 
 const BASE = __ENV.BASE_URL || 'http://localhost:1234';
 const DURATION = __ENV.DURATION || '40s';
@@ -10,15 +9,14 @@ export let options = {
   duration: DURATION,
 };
 
-// Always pick keys only from 1..3000 (hot popular range)
-const HOT_KEY_MAX = 3000;
+// The sequence limit
+const SEQ_MAX = 500;
 
 export default function () {
-  const key = Math.floor(Math.random() * HOT_KEY_MAX) + 1;
+  // __ITER starts at 0 for each VU.
+  // The modulo operator (%) ensures it wraps around after 500.
+  // (+ 1) shifts the range from 0-499 to 1-500.
+  const key = (__ITER % SEQ_MAX) + 1;
 
-  http.get(`${BASE}/val`, {
-    params: { id: key }
-  });
-
-  // No sleep → closed-loop load
+  http.get(`${BASE}/val?id=${key}`);
 }
