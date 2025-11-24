@@ -16,10 +16,10 @@ VUS_LIST=(1 25 50 100 250 500 800 1000 1300 1500 2000)
 
 # workloads -> script filenames (ensure these files exist)
 declare -A WORKLOAD_SCRIPTS=(
-  ["get_only"]="get_only.js"
-  ["put_only"]="put_only.js"
-  ["delete_only"]="delete_only.js"
-  ["mixed"]="mixed.js"
+  #["get_only"]="get_only.js"
+  #["put_only"]="put_only.js"
+  #["delete_only"]="delete_only.js"
+  #["mixed"]="mixed.js"
 )
 
 # Tools check
