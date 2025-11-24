@@ -11,3 +11,13 @@ python3 load_gen.py --host localhost --port 1234 --thread-steps 50,200,500 --dur
 python3 load_gen.py --host localhost --port 1234 --thread-steps 50,200,500 --duration 60 --workload mixed --csv mixed_60s.csv
 
 sudo service postgresql restart
+
+server.cpp
+client.cpp
+
+g++ server.cpp -lpqxx -lpq -lpthread -o server
+g++ client.cpp -o client -lpqxx -lpq -lssl -lcrypto
+
+
+
+wrk -t400 -c400 -d10s "http://127.0.0.1:1234/val?id=1"
