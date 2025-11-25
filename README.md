@@ -1,23 +1,73 @@
-taskset -c 3-11 python3 load_gen.py --host localhost --port 1234 --workload get_all --key-space 10000 --thread-steps 10,50,100,200,250,500,1000 --csv getpop_o.csv
+# DECS Project
 
-python plot.py getpop.csv
+## Overview
+This repository contains the DECS project, which includes a server, client, and load generator for testing and benchmarking purposes. The project is structured as follows:
 
-htop
+- `server/` and `server_debug/`: Contains the server implementation.
+- `client/` and `client_small/`: Contains the client implementation.
+- `load_gen/`: Contains scripts for generating load and analyzing results.
+- `results/`: Stores output CSV files from load generation tests.
 
-python3 load_gen.py --host localhost --port 1234 --thread-steps 50,200,500 --duration 30 --workload get_all --csv read_heavy.csv
+## Build Instructions
 
-python3 load_gen.py --host localhost --port 1234 --thread-steps 50,200,500 --duration 30 --workload put_all --csv write_heavy.csv
+### Prerequisites
+- A C++ compiler (e.g., `g++` for Linux/Windows).
+- Node.js for running JavaScript load generator scripts.
+- Python for running analysis scripts.
 
-python3 load_gen.py --host localhost --port 1234 --thread-steps 50,200,500 --duration 60 --workload mixed --csv mixed_60s.csv
+### Build Commands
+To build the server and client, use the following commands:
 
-sudo service postgresql restart
+#### Server
+```bash
+g++ -o server server.cpp -lpqxx -lpq -lpthread
+```
 
-server.cpp
-client.cpp
+#### Client
+```bash
+g++ -o client client.cpp
+```
 
-g++ server.cpp -lpqxx -lpq -lpthread -o server
-g++ client.cpp -o client -lpqxx -lpq -lssl -lcrypto
+#### Client (Small)
+```bash
+g++ -o client_small client_small.cpp -lpthread
+```
 
+## Load Generator Usage
 
+### JavaScript Scripts
+The `load_gen/` folder contains JavaScript scripts for generating load. Use Node.js to run these scripts. For example:
 
-wrk -t400 -c400 -d10s "http://127.0.0.1:1234/val?id=1"
+```bash
+./script.sh
+```
+You can change the type of workload and duration for each workload using arguments or can just modify the script.sh.
+
+### Python Scripts
+The `load_gen/` folder also contains Python scripts for analyzing results. For example:
+
+```bash
+python csv_plot.py results_<work_load>.csv
+```
+Plots are saved in the results/ folder in load_gen/
+
+### Output
+The results of the load generation tests are stored as CSV files in the `load_gen/` folder and its subdirectories.
+
+## Key Files and Folders
+
+- `server.cpp`: Main server implementation.
+- `client.cpp`: Main client implementation.
+- `client_small.cpp`: Lightweight client implementation.
+- `kvcache.h`: Header file for key-value cache.
+- `httplib.h`: Header file for HTTP library.
+- `load_gen/`: Contains load generation and analysis scripts.
+- `results/`: Stores output CSV files from tests.
+
+## Notes
+- Ensure all dependencies are installed before running the scripts.
+- Modify the scripts as needed to suit your testing requirements.
+
+# Other tools
+- Use htop to monitor real time CPU usage.
+- Use iostat -dx 1 to monitor real time disk utilization.

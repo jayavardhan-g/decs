@@ -5,19 +5,19 @@ set -euo pipefail
 # Ensure k6, vmstat (procps), iostat (sysstat), jq are installed.
 
 BASE_URL=${BASE_URL:-http://localhost:1234}
-DURATION=${DURATION:-20s}
+DURATION=${DURATION:-40s}
 KEYSPACE=${KEYSPACE:-20000}
 # VU list (modify as you like)
-VUS_LIST=(10 50 100 175 250 500 750 1000)
-# VUS_LIST=(1)
+# VUS_LIST=(10 50 100 175 250 500 750 1000)
+VUS_LIST=(1500)
 
 # workloads and corresponding script filenames
 declare -A WORKLOAD_SCRIPTS=(
   # ["get_only"]="get_only.js"
-  # ["put_only"]="put_only.js"
+  ["put_only"]="put_only.js"
   # ["delete_only"]="delete_only.js"
-  ["mixed"]="mixed.js"
-  ["get_popular"]="get_popular.js"
+  # ["mixed"]="mixed.js"
+  # ["get_popular"]="get_popular.js"
 )
 
 # ensure k6 scripts exist
